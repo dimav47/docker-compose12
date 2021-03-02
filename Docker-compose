@@ -16,4 +16,33 @@ services:
         source: mysqlDB
         target: /var/lib/mysql
     networks:
-      app_net:
+      - networks
+
+  performance:
+    build:
+      context: ./webappbuild
+      dockerfile: Dockerfile
+    volumes:
+      - application-volume:/home/webapp/App42PaaS-Java-MySQL-Sample/target/
+      - properties-volume:/home/webapp/App42PaaS-Java-MySQL-Sample/WebContent/
+
+  openwebprod:
+    build:
+      context: ./openwebprod
+      dockerfile: Dockerfile
+    depends_on:
+      - database
+    ports:
+      - "8080:8080"
+    volumes:
+      - application-volume:/usr/local/tomcat/webapps/
+      - properties-volume:/usr/local/tomcat/ROOT/
+    networks:
+      - networks
+
+volumes:
+  database-volume:
+  application-volume:
+  properties-volume:
+    networks:
+      - networks
