@@ -1,4 +1,19 @@
 version: "3"
 services:
   mysql:
-    image: 
+    image: mysql:5
+    enviroment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: paasdb
+      MYSQL_USER: paasdb_user
+      MYSQL_PASSWORD: secret
+    healthcheck:
+      test: mysql --user=$$MYSQL_USER --password=$$MYSQL_PASSWORD -e 'SHOW DATABASES;'
+      timeout: 5s
+      retries: 3
+    volumes:
+      - type: volume
+        source: mysqlDB
+        target: /var/lib/mysql
+    networks:
+      app_net:
